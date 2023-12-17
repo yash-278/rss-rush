@@ -47,6 +47,7 @@ func main() {
 	apiRouter.Get("/err", apiCfg.readinessErrHandler)
 
 	apiRouter.Post("/users", apiCfg.handleCreateUser)
+	apiRouter.Get("/users", apiCfg.handleGetUserByApiKey)
 
 	srv := &http.Server{
 		Addr:    ":" + port,
