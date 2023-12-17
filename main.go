@@ -47,8 +47,10 @@ func main() {
 	apiRouter.Get("/err", apiCfg.readinessErrHandler)
 
 	apiRouter.Post("/users", apiCfg.handleCreateUser)
-	apiRouter.Get("/users", apiCfg.handleGetUserByApiKey)
+	apiRouter.Get("/users", apiCfg.middlewareAuth(apiCfg.handleGetUserByApiKey))
 
+	apiRouter.Post("/feeds", apiCfg.middlewareAuth(apiCfg.handleCreateFeeds))
+	apiRouter.Get("/feeds", apiCfg.handleGetFeeds)
 	srv := &http.Server{
 		Addr:    ":" + port,
 		Handler: r,

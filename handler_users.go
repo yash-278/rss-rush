@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"rss-rush/internal/database"
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -45,20 +44,6 @@ func (cfg *apiConfig) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, 200, databaseUserToUser(user))
 }
 
-func (cfg *apiConfig) handleGetUserByApiKey(w http.ResponseWriter, r *http.Request) {
-	apiKey := r.Header.Get("Authorization")
-
-	key := strings.Split(apiKey, " ")
-	if len(key) < 2 {
-		respondWithError(w, http.StatusUnauthorized, "Invalid API Key")
-		return
-	}
-
-	user, err := cfg.DB.GetUserByApiKey(r.Context(), key[1])
-	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "Invalid API Key")
-		return
-	}
-
+func (cfg *apiConfig) handleGetUserByApiKey(w http.ResponseWriter, r *http.Request, user database.User) {
 	respondWithJSON(w, 200, databaseUserToUser(user))
 }
