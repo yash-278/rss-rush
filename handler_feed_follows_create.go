@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (cfg *apiConfig) handleFeedFollows(w http.ResponseWriter, r *http.Request, user database.User) {
+func (cfg *apiConfig) handleFeedFollowsCreate(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		FeedId string `json:"feed_id"`
 	}
@@ -23,7 +23,7 @@ func (cfg *apiConfig) handleFeedFollows(w http.ResponseWriter, r *http.Request, 
 	}
 
 	newUuid, err := uuid.NewUUID()
-	if err != nil {
+	if err != nil || len(params.FeedId) != 36 {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't create UUID")
 		return
 	}

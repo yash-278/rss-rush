@@ -15,6 +15,11 @@ func (cfg *apiConfig) handleCreateFeeds(w http.ResponseWriter, r *http.Request, 
 		Url  string `json:"url"`
 	}
 
+	type response struct {
+		Feed       `json:"feed"`
+		FeedFollow `json:"feed_follow"`
+	}
+
 	decoder := json.NewDecoder(r.Body)
 	params := parameters{}
 	err := decoder.Decode(&params)
@@ -23,14 +28,14 @@ func (cfg *apiConfig) handleCreateFeeds(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	uuid, err := uuid.NewUUID()
+	userUuid, err := uuid.NewUUID()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't create UUID")
 		return
 	}
 
 	feedData := database.CreateFeedParams{
-		ID:        uuid,
+		ID:        userUuid,
 		UserID:    user.ID,
 		Name:      params.Name,
 		Url:       params.Url,
@@ -44,7 +49,30 @@ func (cfg *apiConfig) handleCreateFeeds(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	respondWithJSON(w, 200, databaseFeedToFeed(feed))
+	followUuid, err := uuid.NewUUID()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Couldn't create UUID")
+		return
+	}
+
+	feedFollowParams := database.CreateFeedFollowParams{
+		ID:        followUuid,
+		UserID:    user.ID,
+		FeedID:    feed.ID,
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+	}
+
+	feedFollow, err := cfg.DB.CreateFeedFollow(r.Context(), feedFollowParams)
+	if err != nil {
+		respondWithError(w, http.StatusNotFound, "cannot create a feed follow")
+		return
+	}
+
+	respondWithJSON(w, 200, response{
+		databaseFeedToFeed(feed),
+		databaseFeedFollowToFeedFollow(feedFollow),
+	})
 }
 
 func (cfg *apiConfig) handleGetFeeds(w http.ResponseWriter, r *http.Request) {

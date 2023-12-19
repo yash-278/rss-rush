@@ -9,10 +9,10 @@ import (
 
 type User struct {
 	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 	Name      string    `json:"name"`
 	ApiKey    string    `json:"api_key"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func databaseUserToUser(user database.User) User {
@@ -27,11 +27,11 @@ func databaseUserToUser(user database.User) User {
 
 type Feed struct {
 	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 	Name      string    `json:"name"`
 	Url       string    `json:"url"`
 	UserId    string    `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func databaseFeedToFeed(feed database.Feed) Feed {
@@ -47,18 +47,18 @@ func databaseFeedToFeed(feed database.Feed) Feed {
 
 type FeedFollow struct {
 	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 	FeedId    string    `json:"feed_id"`
 	UserId    string    `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func databaseFeedFollowToFeedFollow(feed database.FeedsFollow) FeedFollow {
 	return FeedFollow{
 		ID:        feed.ID,
-		CreatedAt: feed.CreatedAt,
-		UpdatedAt: feed.UpdatedAt,
 		FeedId:    feed.FeedID.String(),
 		UserId:    feed.UserID.String(),
+		CreatedAt: feed.CreatedAt,
+		UpdatedAt: feed.UpdatedAt,
 	}
 }
